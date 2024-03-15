@@ -1,0 +1,11 @@
+
+# this was made with Python 3.11.3
+
+numpy==1.26.2
+mss==9.0.1
+opencv-python==4.9.0.80
+pygame==2.5.2
+#PyHook3==1.6.1
+pywin32==306
+pytesseract==0.3.10
+easygui==0.98.3
