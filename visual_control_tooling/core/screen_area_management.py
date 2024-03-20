@@ -57,3 +57,25 @@ def get_gem_cut_studio_screen_area_params():
     print(screen_area_params.toString())
 
     return ScreenAreaParams(topleft_point, bottomright_point, width, height, orientation)
+
+def get_gemray_screen_area_params(sct, monitor_num):
+    left = sct.monitors[monitor_num]['left']
+    top = sct.monitors[monitor_num]['top']
+    width = sct.monitors[monitor_num]['width']
+    right = left + width
+    height = sct.monitors[monitor_num]['height']
+    bottom = top + height
+    topleft_point = Point(left, top)
+    bottomright_point = Point(right, bottom)
+    width = right - left
+    height = bottom - top
+    if width > height:
+        orientation = Orientation.HORIZONTAL
+    else:
+        orientation = Orientation.VERTICAL
+
+    screen_area_params = ScreenAreaParams(topleft_point, bottomright_point, width, height, orientation)
+    print("GemRay studio screen area params : ")
+    print(screen_area_params.toString())
+
+    return ScreenAreaParams(topleft_point, bottomright_point, width, height, orientation)
