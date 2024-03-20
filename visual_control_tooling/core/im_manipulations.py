@@ -3,6 +3,7 @@
 import cv2
 import numpy as np
 
+from visual_control_tooling.core.log_system import Logger
 from visual_control_tooling.core.data_models import Point
 
 def is_template_in_image(im: np.ndarray, template_im: np.ndarray, threshold=0.8) -> bool:
@@ -61,25 +62,26 @@ def put_image_in_image(big_im: np.ndarray, small_im: np.ndarray, topleft_in_big:
     return big_im
 
 
-def get_pixel_value(im: np.ndarray, x: int, y: int) -> tuple[int, int, int]:
-    x = int(x)
-    y = int(y)
-    return im[y][x]
+def get_pixel_value(im: np.ndarray, position: Point) -> tuple[int, int, int]:
+    Logger.get_instance().log_info(f"Measuring pixel at position {position.toString()}")
+    color_value = im[position.y][position.x]
+    Logger.get_instance().log_info(f"color value {color_value}")
+    return color_value
 
 
 def is_pixel_same_color(pixel: tuple[int, int], color_bgr: tuple[int, int, int]) -> bool:
     return pixel[0] == color_bgr[0] and pixel[1] == color_bgr[1] and pixel[2] == color_bgr[2]
 
 
-def is_pixel_same_color_aprox(LOGGER, pixel: tuple[int, int], color_bgr: tuple[int, int, int], tolerance: int) -> bool:
-    LOGGER.log_info("Ingame pixel color : {}".format(pixel))
-    LOGGER.log_info("Target color : {}".format(color_bgr))
-    LOGGER.log_info("Tolerance : {}".format(tolerance))
-    p1 = color_bgr[0]-tolerance<pixel[0]<color_bgr[0]+tolerance
-    p2 = color_bgr[1]-tolerance<pixel[1]<color_bgr[1]+tolerance
-    p3 = color_bgr[2]-tolerance<pixel[2]<color_bgr[2]+tolerance
+def is_pixel_same_color_aprox(current_pixel_color: tuple[int, int, int], color_bgr: tuple[int, int, int], tolerance: int) -> bool:
+    Logger.get_instance().log_info("measured pixel color : {}".format(current_pixel_color))
+    Logger.get_instance().log_info("target color : {}".format(color_bgr))
+    Logger.get_instance().log_info("tolerance : {}".format(tolerance))
+    p1 = color_bgr[0]-tolerance<current_pixel_color[0]<color_bgr[0]+tolerance
+    p2 = color_bgr[1]-tolerance<current_pixel_color[1]<color_bgr[1]+tolerance
+    p3 = color_bgr[2]-tolerance<current_pixel_color[2]<color_bgr[2]+tolerance
     is_same_color = p1 and p2 and p3
-    LOGGER.log_info("Same color? : {}".format(is_same_color))
+    Logger.get_instance().log_info("Same color? : {}".format(is_same_color))
     return is_same_color
 
 
