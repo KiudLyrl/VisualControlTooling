@@ -204,6 +204,23 @@ class TemplateManager:
             if looping_since > timeout:
                 raise RecoverableException("Stuck in infinite loop (more than " + str(timeout) + " sec) looking for : " + self.template.name)
 
+    def block_WHILE_template_is_present(self, iteration_time, timeout):
+        # loop that keep looking and cliquing every 0.3 sec in case the clic missed
+        self.logger.log_info("{}_manager : blocking while found".format(self.template.name))
+        start = time.time()
+        while True:
+            time.sleep(iteration_time)
+            fresh_im = self.screenshotter.take_screenshot(self.screen_area_params)
+            fresh_cropped_im = self._crop_search_area(fresh_im)
+            template_current_pos_point = iman.locate_template_in_image(fresh_cropped_im, self.template.im, threshold=self.template.precision)
+
+            if template_current_pos_point is None:
+                return
+
+            looping_since = time.time() - start
+            if looping_since > timeout:
+                raise RecoverableException("Stuck in infinite loop (more than " + str(timeout) + " sec) looking for : " + self.template.name + "disseaperance")
+
     def _block_until_template_disseapear_while_recliquing_it_if_still_present(self, iteration_time, timeout):
         # loop that keep looking and cliquing every iteration_time sec in case the clic missed
         self.logger.log_info("{}_manager : blocking untill it disseapears".format(self.template.name))
@@ -260,3 +277,80 @@ class TemplateManager:
             cv2.imwrite(filename, self.screenshotter.last_pic_taken)
         self._block_until_template_disseapear_while_recliquing_it_if_still_present(0.5, timeout_seconds)
         return True
+
+
+def smart_ui_clic(tm_to_clic: TemplateManager, tm_to_appear_after: TemplateManager, time_for_apparition=30):
+    """
+    Use for when you act on some UI, you clic on something, and then something happens, you want to be sure that your clic workded
+
+    il clic on tm_to_clic then blocks untill tm_to_appear_after for 'time_for_apparition' seconds at maximum, if tm_to_appear_after is still not
+    visible then it redo it, 3 times, then raise an Exception
+
+    :param tm_to_clic: the template manager of the template that show what you want to clic
+    :param tm_to_appear_after:  the template manager of the template that should be visible once the clic has worked
+    :param time_for_apparition: how much time to look for the result of the clic
+    :return: nothing
+    """
+    n_try = 0
+    while True:
+
+        if n_try > 3:
+            msg = f"we clicked and we clicked on '{tm_to_clic.template.name}' but '{tm_to_appear_after.template.name}' never appeared"
+            Logger.get_instance().log_info(msg)
+            raise UnrecoverableException(msg)
+
+        tm_to_clic.clic_on_template_if_present_only_once()
+        try:
+            tm_to_appear_after.block_until_template_is_present(0.3, time_for_apparition)
+            return
+        except RecoverableException:
+            Logger.get_instance().log_info(f"'{tm_to_appear_after.template.name}' did not appear, recliquing on '{tm_to_clic.template.name}', try number {n_try+1}")
+            n_try += 1
+
+def block_while(is_visible: TemplateManager, is_not_visible: TemplateManager):
+    """
+    is_not_visible is mean to be a template behind the is_visible template
+
+    bassically the same thing as 'smart_ui_clic' but without clicking
+    :param is_visible:
+    :param is_not_visible:
+    :return:
+    """
+    pass
+
+def clic_and_detect_color_change(screenshotter, cliquer, screen_area_params, clic_pos: Point, color_pixel_pos: Point, wanted_pixel_color_after_clic=None):
+    """
+    1/ measure the color of the point at coordinates color_pixel_pos
+    2/ clic at coordinate clic_pos
+    3/ block untill the color of the point at coordinates color_pixel_pos change if color_pixel_color is None
+       of block untill the color of the point at coordinates color_pixel_pos change to color_pixel_color if not None
+
+    :param clic_pos:
+    :param color_pixel_pos:
+    :param color_pixel_color:
+    :return:
+    """
+    fresh_im = screenshotter.take_screenshot(screen_area_params)
+    crop = iman.crop_im(fresh_im, Point(clic_pos.x-10, clic_pos.y-10), Point(clic_pos.x+10, clic_pos.y+10))
+    cv2.imwrite("before_pixel_measure_screenshot.png", crop)
+    before_clic_pixel_color = iman.get_pixel_value(fresh_im, color_pixel_pos)
+    print(before_clic_pixel_color)
+    Logger.get_instance().log_info(f"Color before clic : {before_clic_pixel_color}")
+    while True:
+        cliquer.click_relative_to_screen_area_and_return_to_last_pos(clic_pos)
+        time.sleep(0.1)
+        fresh_im = screenshotter.take_screenshot(screen_area_params)
+        crop = iman.crop_im(fresh_im, Point(clic_pos.x - 10, clic_pos.y - 10), Point(clic_pos.x + 10, clic_pos.y + 10))
+        cv2.imwrite("after_pixel_measure_screenshot.png", crop)
+        new_pixel_color = iman.get_pixel_value(fresh_im, color_pixel_pos)
+        print(before_clic_pixel_color)
+
+        if iman.is_pixel_same_color_aprox(new_pixel_color, before_clic_pixel_color, tolerance=10):
+            time.sleep(0.1)
+            continue
+
+        if wanted_pixel_color_after_clic is None:
+            return
+
+        if iman.is_pixel_same_color_aprox(new_pixel_color, wanted_pixel_color_after_clic, tolerance=10):
+            return
