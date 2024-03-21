@@ -11,6 +11,14 @@ Here I put the code required to locate softwares window, usefull as in 6 month I
 the window title or specifics needed to do it
 """
 
+gemray_main_window_name = "GemRay Options"
+gemray_stone_color_window_name = "Edit Colors"
+gemray_background_color_window_name = "Edit Colors"
+gemray_load_file_window_name = "Choose a GemCad file"
+gemray_render_window_name = "{you_file_name_without_path}"
+gemray_save_render_images_window_name = "Save As JPEG file"
+gemray_chart_window_name = "{you_file_name_without_path}"
+
 
 def is_window_minimized(window_title):
     """Check if a window with a given title is minimized."""
@@ -30,6 +38,33 @@ def get_gem_cut_studio_window_name():
     for title in window_titles:
         if title.startswith("Gem Cut Studio"):
             return title
+
+def get_window_screen_area_params(window_name):
+
+    window_names = list_all_windows_titles()
+
+    if window_name not in window_names:
+        raise UnrecoverableException(f"{window_name} window not found")
+
+    if is_window_minimized(window_name):
+        raise UnrecoverableException(f"{window_name} is minimized")
+
+    hwnd = win32gui.FindWindow(None, window_name)
+    left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+    topleft_point = Point(left, top)
+    bottomright_point = Point(right, bottom)
+    width = right - left
+    height = bottom - top
+    if width > height:
+        orientation = Orientation.HORIZONTAL
+    else:
+        orientation = Orientation.VERTICAL
+
+    screen_area_params = ScreenAreaParams(topleft_point, bottomright_point, width, height, orientation)
+    print(f"{window_name} screen area params : ")
+    print(screen_area_params.toString())
+
+    return ScreenAreaParams(topleft_point, bottomright_point, width, height, orientation)
 
 def get_gem_cut_studio_screen_area_params():
 
@@ -79,3 +114,8 @@ def get_gemray_screen_area_params(sct, monitor_num):
     print(screen_area_params.toString())
 
     return ScreenAreaParams(topleft_point, bottomright_point, width, height, orientation)
+
+def print_all_window_names():
+    window_titles = list_all_windows_titles()
+    for title in window_titles:
+        print(title)
