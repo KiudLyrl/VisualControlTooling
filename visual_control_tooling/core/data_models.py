@@ -55,7 +55,7 @@ class ScreenAreaParams:
 	this class represents the window you want to control, that I call the screen_area
 	"""
 
-	def __init__(self, absolute_topleft_point: Point, absolute_bottomright_point: Point, width: int, height: int, orientation: str):
+	def __init__(self, absolute_topleft_point: Point, absolute_bottomright_point: Point, width: int, height: int, orientation: Orientation):
 		self.absolute_topleft_point: Point = absolute_topleft_point
 		self.absolute_bottomright_point: Point = absolute_bottomright_point
 		self.height: int = height
