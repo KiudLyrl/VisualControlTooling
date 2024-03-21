@@ -160,3 +160,7 @@ cython_debug/
 #.idea/
 
 /.idea/*
+/visual_control_tooling/gcs_bot/template_im.png
+/visual_control_tooling/gcs_bot/search_area.png
+/visual_control_tooling/gcs_bot/before_pixel_measure_screenshot.png
+/visual_control_tooling/gcs_bot/after_pixel_measure_screenshot.png
