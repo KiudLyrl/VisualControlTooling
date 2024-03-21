@@ -279,7 +279,7 @@ class TemplateManager:
         return True
 
 
-def smart_ui_clic(tm_to_clic: TemplateManager, tm_to_appear_after: TemplateManager, time_for_apparition=30):
+def smart_ui_clic(tm_to_clic: TemplateManager, tm_to_appear_after: TemplateManager, timeout=30):
     """
     Use for when you act on some UI, you clic on something, and then something happens, you want to be sure that your clic workded
 
@@ -288,7 +288,7 @@ def smart_ui_clic(tm_to_clic: TemplateManager, tm_to_appear_after: TemplateManag
 
     :param tm_to_clic: the template manager of the template that show what you want to clic
     :param tm_to_appear_after:  the template manager of the template that should be visible once the clic has worked
-    :param time_for_apparition: how much time to look for the result of the clic
+    :param timeout: how much time to look for the result of the clic
     :return: nothing
     """
     n_try = 0
@@ -301,7 +301,7 @@ def smart_ui_clic(tm_to_clic: TemplateManager, tm_to_appear_after: TemplateManag
 
         tm_to_clic.clic_on_template_if_present_only_once()
         try:
-            tm_to_appear_after.block_until_template_is_present(0.3, time_for_apparition)
+            tm_to_appear_after.block_until_template_is_present(0.3, timeout)
             return
         except RecoverableException:
             Logger.get_instance().log_info(f"'{tm_to_appear_after.template.name}' did not appear, recliquing on '{tm_to_clic.template.name}', try number {n_try+1}")
