@@ -9,3 +9,7 @@ pygame==2.5.2
 pywin32==306
 pytesseract==0.3.10
 easygui==0.98.3
+pyperclip==1.8.2
+pyautogui
+imageio
+imageio-ffmpeg
