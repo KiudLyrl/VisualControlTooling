@@ -31,7 +31,7 @@ def clear_console(os=OS.WINDOWS) -> None:
     else:
         raise UnrecoverableException(f"Unknow OS : {os}")
 
-def get_all_files_from(my_path: str) -> None:
+def get_all_files_from(my_path: str) -> list[str]:
     """return all filename in a folder, without their path"""
     file_list_without_path = [ f for f in listdir(my_path) if isfile(join(my_path,f)) and 'desktop.ini' not in f ]
     return file_list_without_path

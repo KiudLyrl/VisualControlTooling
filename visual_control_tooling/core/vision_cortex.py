@@ -132,7 +132,7 @@ class TemplateManager:
             self.last_detection = time.time()
             return Point(template_position.x + self.template.search_area_topleft.x, template_position.y + self.template.search_area_topleft.y)
 
-    def is_present(self, screen_area_im):
+    def is_present_in_im(self, screen_area_im):
         """
         Indicate if a template is present or not
 
@@ -220,6 +220,15 @@ class TemplateManager:
             looping_since = time.time() - start
             if looping_since > timeout:
                 raise RecoverableException("Stuck in infinite loop (more than " + str(timeout) + " sec) looking for : " + self.template.name + "disseaperance")
+
+    def template_is_present(self):
+        # loop that keep looking and cliquing every 0.3 sec in case the clic missed
+        self.logger.log_info("{}_manager : checking if present".format(self.template.name))
+        fresh_im = self.screenshotter.take_screenshot(self.screen_area_params)
+        fresh_cropped_im = self._crop_search_area(fresh_im)
+        template_current_pos_point = iman.locate_template_in_image(fresh_cropped_im, self.template.im, threshold=self.template.precision)
+        return template_current_pos_point is not None
+
 
     def _block_until_template_disseapear_while_recliquing_it_if_still_present(self, iteration_time, timeout):
         # loop that keep looking and cliquing every iteration_time sec in case the clic missed

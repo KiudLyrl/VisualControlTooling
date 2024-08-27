@@ -39,6 +39,16 @@ def get_gem_cut_studio_window_name():
         if title.startswith("Gem Cut Studio"):
             return title
 
+def get_gemcard_window_name():
+    """
+    The windows name change each time you load a file, but always ends with 'GemCad'
+    :return:
+    """
+    window_titles = list_all_windows_titles()
+    for title in window_titles:
+        if title.endswith("GemCad"):
+            return title
+
 def get_window_screen_area_params(window_name):
 
     window_names = list_all_windows_titles()
@@ -94,6 +104,12 @@ def get_gem_cut_studio_screen_area_params():
     return ScreenAreaParams(topleft_point, bottomright_point, width, height, orientation)
 
 def get_gemray_screen_area_params(sct, monitor_num):
+    """
+    we just take the entire screen
+    :param sct:
+    :param monitor_num:
+    :return:
+    """
     left = sct.monitors[monitor_num]['left']
     top = sct.monitors[monitor_num]['top']
     width = sct.monitors[monitor_num]['width']
@@ -111,6 +127,34 @@ def get_gemray_screen_area_params(sct, monitor_num):
 
     screen_area_params = ScreenAreaParams(topleft_point, bottomright_point, width, height, orientation)
     print("GemRay studio screen area params : ")
+    print(screen_area_params.toString())
+
+    return ScreenAreaParams(topleft_point, bottomright_point, width, height, orientation)
+
+def get_gemcad_screen_area_params(sct, monitor_num):
+    """
+    we just take the entire screen
+    :param sct:
+    :param monitor_num:
+    :return:
+    """
+    left = sct.monitors[monitor_num]['left']
+    top = sct.monitors[monitor_num]['top']
+    width = sct.monitors[monitor_num]['width']
+    right = left + width
+    height = sct.monitors[monitor_num]['height']
+    bottom = top + height
+    topleft_point = Point(left, top)
+    bottomright_point = Point(right, bottom)
+    width = right - left
+    height = bottom - top
+    if width > height:
+        orientation = Orientation.HORIZONTAL
+    else:
+        orientation = Orientation.VERTICAL
+
+    screen_area_params = ScreenAreaParams(topleft_point, bottomright_point, width, height, orientation)
+    print("Gemcad screen area params : ")
     print(screen_area_params.toString())
 
     return ScreenAreaParams(topleft_point, bottomright_point, width, height, orientation)

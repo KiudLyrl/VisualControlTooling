@@ -19,7 +19,7 @@ red = 255, 0, 0
 white = 255, 255, 255
 black = 0, 0, 0
 
-images_path = "../some_path/*.png"
+images_path = "./GemRay_Options_screenshots/*.png"
 
 class UiElement:
     def __init__(self, left, top, width, height):

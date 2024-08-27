@@ -164,3 +164,5 @@ cython_debug/
 /visual_control_tooling/gcs_bot/search_area.png
 /visual_control_tooling/gcs_bot/before_pixel_measure_screenshot.png
 /visual_control_tooling/gcs_bot/after_pixel_measure_screenshot.png
+/visual_control_tooling/gemray_bot/search_area.png
+/visual_control_tooling/gemray_bot/template_im.png

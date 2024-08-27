@@ -3,7 +3,7 @@ import pygame
 import cv2
 import easygui
 
-images_path = r"C:\checkout2\common-scripts\facet_diagrams\gemcutstudio_screenshoter\screenshots_fullscreen\*.png"
+images_path = r"gemcad_for_templating\*.png"
 
 # coordinates computation is broken if this is change, need to fix it
 IMAGE_SCALE = 1

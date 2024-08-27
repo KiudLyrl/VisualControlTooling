@@ -14,7 +14,7 @@ from visual_control_tooling.core.data_models import Point
 Example of how I automate softwares without API/command line interfaces
 """
 
-diagrams_path = r"C:\checkout2\common-scripts\facet_diagrams\facet_diagrams\open_diagrams\diagrams"
+diagrams_path = r"C:\checkout2\common-scripts\facet_diagrams\downloader\charles_covil_odd_series\diagrams"
 temp_folder_for_easy_load = r"C:\checkout2\common-scripts\facet_diagrams\facet_diagrams\temp_for_rendering"
 animation_output_path = r"C:\Users\Oliver\Documents\GemCutStudio\Animations"
 chart_output_path = r"C:\Users\Oliver\Documents\GemCutStudio\Designs"
@@ -42,7 +42,7 @@ def read_all_facet_diagrams_filenames(path):
     absolute_paths = []
     for root, dirs, files in os.walk(path):
         for file in files:
-            if file.endswith(".asc"):
+            if file.endswith(".asc") or file.endswith(".gem") or file.endswith(".gcs"):
                 absolute_paths.append(os.path.join(root, file))
     logger.log_info(fr"Found {len(absolute_paths)} diagrams")
     return absolute_paths

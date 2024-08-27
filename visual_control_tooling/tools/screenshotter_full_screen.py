@@ -26,9 +26,10 @@ def take_screenshot(monitor_number, monitor_relative_top_left, width, height, ts
 
 if __name__ == '__main__':
     TS_FORMAT = '%Y-%m-%d_%H.%M.%S.%f'
-    SCREENSHOT_DIR = "top_screen_screenshots"
+    SCREENSHOT_DIR = "gemcad_for_templating"
     monitor_number = 2
     monitor_relative_top_left = Point(0, 0)
     width = 1920
     height = 1080
+    time.sleep(5)
     take_screenshot(monitor_number, monitor_relative_top_left, width, height, TS_FORMAT, SCREENSHOT_DIR)
